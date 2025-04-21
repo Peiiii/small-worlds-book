@@ -13,9 +13,9 @@
 
 ## 技术栈
 
-- Next.js
 - TypeScript
 - Tailwind CSS
+- Shadcn UI
 - React Context
 - PNPM
 
