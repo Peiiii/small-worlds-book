@@ -3,17 +3,18 @@
 import { useRef, useState } from "react"
 import { Canvas, useFrame } from "@react-three/fiber"
 import { OrbitControls, useGLTF, Environment, Text, Html } from "@react-three/drei"
-import { Sparkles, Cloud, Float } from "@react-three/drei"
+import { Sparkles, Float } from "@react-three/drei"
 import { MathUtils } from "three"
+import * as THREE from "three"
 import { Button } from "@/components/ui/button"
 import { useWorlds } from "@/components/worlds-context"
 import { useSound } from "@/hooks/use-sound"
 import { Badge } from "@/components/ui/badge"
 import { SparklesIcon } from "lucide-react"
 
-function Tree({ position, scale = 1, rotation = [0, 0, 0] }) {
+function Tree({ position, scale = 1, rotation = [0, 0, 0] }: { position: [number, number, number], scale?: number, rotation?: [number, number, number] }) {
   const { scene } = useGLTF("/assets/3d/tree.glb")
-  const treeRef = useRef()
+  const treeRef = useRef<THREE.Group>(null)
 
   useFrame(({ clock }) => {
     if (treeRef.current) {
@@ -33,8 +34,13 @@ function Tree({ position, scale = 1, rotation = [0, 0, 0] }) {
   )
 }
 
-function Mushroom({ position, scale = 1, glowing = false, onClick }) {
-  const mushroomRef = useRef()
+function Mushroom({ position, scale = 1, glowing = false, onClick }: { 
+  position: [number, number, number], 
+  scale?: number, 
+  glowing?: boolean, 
+  onClick: () => void 
+}) {
+  const mushroomRef = useRef<THREE.Group>(null)
 
   useFrame(({ clock }) => {
     if (mushroomRef.current && glowing) {
@@ -70,7 +76,11 @@ function Mushroom({ position, scale = 1, glowing = false, onClick }) {
 }
 
 function Forest() {
-  const [mushrooms, setMushrooms] = useState([
+  const [mushrooms, setMushrooms] = useState<{
+    id: number;
+    position: [number, number, number];
+    glowing: boolean;
+  }[]>([
     { id: 1, position: [-3, 0, 2], glowing: false },
     { id: 2, position: [2, 0, 3], glowing: false },
     { id: 3, position: [4, 0, -2], glowing: false },
@@ -81,7 +91,7 @@ function Forest() {
   const { discoverWorld } = useWorlds()
   const { playSound } = useSound()
 
-  const handleMushroomClick = (id) => {
+  const handleMushroomClick = (id: number) => {
     playSound("magic")
 
     // Toggle the clicked mushroom's glowing state
@@ -148,10 +158,6 @@ function Forest() {
           </mesh>
         </Float>
       ))}
-
-      {/* Clouds */}
-      <Cloud position={[-4, 8, -5]} args={[3, 2]} opacity={0.5} />
-      <Cloud position={[5, 10, 0]} args={[4, 2]} opacity={0.3} />
 
       {/* Title */}
       <Text

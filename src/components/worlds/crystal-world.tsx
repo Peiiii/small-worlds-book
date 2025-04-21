@@ -239,15 +239,15 @@ export function CrystalWorld() {
             crystal.active
               ? {
                   scale: [1, 1.1, 1],
-                  rotate: crystal.rotation + [0, 5, 0],
+                  rotate: [crystal.rotation, crystal.rotation + 5, crystal.rotation],
+                  transition: {
+                    duration: 2,
+                    repeat: crystal.active ? Number.POSITIVE_INFINITY : 0,
+                    ease: "easeInOut",
+                  }
                 }
               : {}
           }
-          transition={{
-            duration: 2,
-            repeat: crystal.active ? Number.POSITIVE_INFINITY : 0,
-            ease: "easeInOut",
-          }}
         >
           {/* Crystal shape */}
           <div
