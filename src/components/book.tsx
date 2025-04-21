@@ -18,6 +18,7 @@ import { StoryModal } from "@/components/story-modal"
 import { TableOfContents } from "@/components/table-of-contents"
 import { Button } from "@/components/ui/button"
 import { useSound } from "@/hooks/use-sound"
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
 
 export function Book() {
   const [currentPage, setCurrentPage] = useState(0)
@@ -124,27 +125,37 @@ export function Book() {
     prevPage()
   }
 
+  // 添加键盘导航支持
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'ArrowLeft') handlePrevPage()
+      if (e.key === 'ArrowRight') handleNextPage()
+    }
+    window.addEventListener('keydown', handleKeyDown)
+    return () => window.removeEventListener('keydown', handleKeyDown)
+  }, [handlePrevPage, handleNextPage])
+
   return (
     <>
       <div className="relative w-full max-w-4xl aspect-[3/2] perspective-1000">
-        <div className="absolute top-0 left-0 z-20 flex gap-2 m-4">
+        {/* 窗口外左上角毛玻璃工具栏 */}
+        <div className="absolute -top-10 left-0 z-30 flex flex-row gap-2">
           <Button
-            variant="outline"
-            size="sm"
-            className="bg-amber-100/80 hover:bg-amber-200/80 text-amber-900"
+            variant="ghost"
+            size="icon"
+            className="group w-8 h-8 bg-amber-100/10 backdrop-blur-sm border border-amber-200/20 hover:bg-amber-200/20 hover:border-amber-300/30 shadow-[0_2px_8px_rgba(0,0,0,0.1)] transition-all duration-300 rounded-md"
             onClick={() => setShowToc(true)}
           >
-            <BookOpen className="h-4 w-4 mr-2" />
-            Contents
+            <BookOpen className="h-4 w-4 text-amber-800/70" />
           </Button>
+          
           <Button
-            variant="outline"
-            size="sm"
-            className="bg-amber-100/80 hover:bg-amber-200/80 text-amber-900"
+            variant="ghost"
+            size="icon"
+            className="group w-8 h-8 bg-amber-100/10 backdrop-blur-sm border border-amber-200/20 hover:bg-amber-200/20 hover:border-amber-300/30 shadow-[0_2px_8px_rgba(0,0,0,0.1)] transition-all duration-300 rounded-md"
             onClick={() => setShowStory(true)}
           >
-            <Info className="h-4 w-4 mr-2" />
-            Story
+            <Info className="h-4 w-4 text-amber-800/70" />
           </Button>
         </div>
 
@@ -171,24 +182,24 @@ export function Book() {
             </motion.div>
           </AnimatePresence>
 
-          {/* Page corners for turning */}
+          {/* 侧边翻页按钮 */}
           {currentPage > 0 && (
             <button
               onClick={handlePrevPage}
-              className="absolute top-0 left-0 w-16 h-16 md:w-24 md:h-24 bg-gradient-to-br from-amber-100 to-transparent z-20 rounded-br-lg hover:from-amber-200 transition-colors duration-300 flex items-start justify-start p-2"
+              className="absolute left-0 top-1/2 -translate-y-1/2 w-6 h-20 md:w-8 md:h-24 bg-gradient-to-r from-amber-100/60 to-transparent z-20 rounded-r-lg hover:from-amber-200/60 transition-all duration-300 flex items-center justify-center group shadow-sm hover:shadow-md"
               aria-label="Previous page"
             >
-              <ChevronLeft className="h-6 w-6 text-amber-800/70" />
+              <ChevronLeft className="h-4 w-4 text-amber-800/70 group-hover:scale-110 transition-transform" />
             </button>
           )}
 
           {currentPage < worldComponents.length - 1 && (
             <button
               onClick={handleNextPage}
-              className="absolute top-0 right-0 w-16 h-16 md:w-24 md:h-24 bg-gradient-to-bl from-amber-100 to-transparent z-20 rounded-bl-lg hover:from-amber-200 transition-colors duration-300 flex items-start justify-end p-2"
+              className="absolute right-0 top-1/2 -translate-y-1/2 w-6 h-20 md:w-8 md:h-24 bg-gradient-to-l from-amber-100/60 to-transparent z-20 rounded-l-lg hover:from-amber-200/60 transition-all duration-300 flex items-center justify-center group shadow-sm hover:shadow-md"
               aria-label="Next page"
             >
-              <ChevronRight className="h-6 w-6 text-amber-800/70" />
+              <ChevronRight className="h-4 w-4 text-amber-800/70 group-hover:scale-110 transition-transform" />
             </button>
           )}
 
@@ -198,6 +209,13 @@ export function Book() {
           {/* Page number */}
           <div className="absolute bottom-2 left-1/2 transform -translate-x-1/2 text-amber-800/70 text-sm">
             {currentPage + 1} / {worldComponents.length}
+          </div>
+
+          {/* 键盘导航提示 */}
+          <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex items-center gap-2 text-amber-800/70 text-sm opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+            <kbd className="px-2 py-1 bg-amber-100/50 rounded">←</kbd>
+            <span>翻页</span>
+            <kbd className="px-2 py-1 bg-amber-100/50 rounded">→</kbd>
           </div>
         </div>
       </div>
