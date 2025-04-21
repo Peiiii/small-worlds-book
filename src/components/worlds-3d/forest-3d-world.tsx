@@ -12,8 +12,11 @@ import { useSound } from "@/hooks/use-sound"
 import { Badge } from "@/components/ui/badge"
 import { SparklesIcon } from "lucide-react"
 
-function Tree({ position, scale = 1, rotation = [0, 0, 0] }: { position: [number, number, number], scale?: number, rotation?: [number, number, number] }) {
-  const { scene } = useGLTF("/assets/3d/tree.glb")
+function Tree({ position, scale = 1, rotation = [0, 0, 0] }: { 
+  position: [number, number, number], 
+  scale?: number, 
+  rotation?: [number, number, number] 
+}) {
   const treeRef = useRef<THREE.Group>(null)
 
   useFrame(({ clock }) => {
@@ -24,13 +27,18 @@ function Tree({ position, scale = 1, rotation = [0, 0, 0] }: { position: [number
   })
 
   return (
-    <primitive
-      ref={treeRef}
-      object={scene.clone()}
-      position={position}
-      scale={[scale, scale, scale]}
-      rotation={rotation}
-    />
+    <group ref={treeRef} position={position} scale={[scale, scale, scale]} rotation={rotation}>
+      {/* Tree trunk */}
+      <mesh position={[0, 0, 0]}>
+        <cylinderGeometry args={[0.2, 0.3, 2, 8]} />
+        <meshStandardMaterial color="#8B4513" />
+      </mesh>
+      {/* Tree top */}
+      <mesh position={[0, 1.5, 0]}>
+        <coneGeometry args={[1, 2, 8]} />
+        <meshStandardMaterial color="#228B22" />
+      </mesh>
+    </group>
   )
 }
 
@@ -167,7 +175,6 @@ function Forest() {
         color="#1e3a8a"
         anchorX="center"
         anchorY="middle"
-        font="/fonts/Geist_Bold.json"
       >
         森林世界
       </Text>

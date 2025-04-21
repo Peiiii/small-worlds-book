@@ -7,7 +7,8 @@
     "build": "tsc && vite build",
     "start": "next start",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
-    "deploy:web": "pnpm build && ossutil64 cp -r -u dist oss://bookofworlds -c ./.ossutilconfig.local",
+    "upload:web": "ossutil64 cp -r -u dist oss://fantacyworlds -c ./.ossutilconfig.local",
+    "deploy:web": "pnpm build && pnpm upload:web",
     "format": "prettier --write \"**/*.{ts,tsx,md}\""
   },
   "dependencies": {
