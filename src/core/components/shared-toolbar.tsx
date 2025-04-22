@@ -3,11 +3,11 @@ import { useToolbarStore } from '../stores/toolbar-store'
 import { Button } from '@/shared/components/ui/button'
 
 export const SharedToolbar: React.FC = () => {
-  const { tools } = useToolbarStore()
+  const { sortedTools } = useToolbarStore()
 
   return (
     <div className="absolute -top-10 left-0 z-30 flex flex-row gap-2">
-      {tools.map(tool => (
+      {sortedTools.map(tool => (
         <Button
           key={tool.id}
           variant="ghost"

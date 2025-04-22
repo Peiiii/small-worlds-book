@@ -17,6 +17,7 @@ import { SkyWorld } from "@/features/world/components/worlds/sky-world"
 import { AncientWorld } from "@/features/world/components/worlds/ancient-world"
 import { TableOfContents } from "./table-of-contents"
 import { StoryModal } from "@/features/book/components/story-modal"
+import { useAnimationStore } from "@/core/stores/animation-store"
 
 export function Book() {
   const [currentPage, setCurrentPage] = useState(0)
@@ -25,6 +26,7 @@ export function Book() {
   const [showStory, setShowStory] = useState(false)
   const bookRef = useRef<HTMLDivElement>(null)
   const { registerTool, unregisterTool } = useToolbarStore()
+  const { pageTransitionSpeed } = useAnimationStore()
 
   const worldComponents = [
     <ForestWorld key="forest" />,
@@ -94,23 +96,6 @@ export function Book() {
     return () => window.removeEventListener('keydown', handleKeyDown)
   }, [handlePrevPage, handleNextPage])
 
-  const pageVariants = {
-    enter: (direction: number) => ({
-      x: direction > 0 ? 1000 : -1000,
-      opacity: 0
-    }),
-    center: {
-      zIndex: 1,
-      x: 0,
-      opacity: 1
-    },
-    exit: (direction: number) => ({
-      zIndex: 0,
-      x: direction < 0 ? 1000 : -1000,
-      opacity: 0
-    })
-  }
-
   return (
     <div className="relative w-full max-w-4xl aspect-[3/2] perspective-1000">
       <SharedToolbar />
@@ -124,19 +109,31 @@ export function Book() {
       >
         <div className="absolute inset-0 bg-amber-100/30 pointer-events-none z-10 book-texture" />
 
-        <AnimatePresence initial={false} custom={direction} mode="wait">
+        <div className="relative w-full h-full overflow-hidden">
           <motion.div
-            key={currentPage}
-            custom={direction}
-            variants={pageVariants}
-            initial="enter"
-            animate="center"
-            exit="exit"
-            className="absolute inset-0 flex items-center justify-center"
+            className="absolute inset-0 flex"
+            animate={{
+              x: `${-currentPage * 100}%`
+            }}
+            transition={{
+              type: "spring",
+              stiffness: 300 * pageTransitionSpeed,
+              damping: 30 * pageTransitionSpeed
+            }}
           >
-            <div className="w-full h-full p-4 md:p-8">{worldComponents[currentPage]}</div>
+            {worldComponents.map((component, index) => (
+              <div
+                key={index}
+                className="w-full h-full flex-shrink-0"
+                style={{ width: '100%' }}
+              >
+                <div className="w-full h-full p-4 md:p-8">
+                  {component}
+                </div>
+              </div>
+            ))}
           </motion.div>
-        </AnimatePresence>
+        </div>
 
         {/* 侧边翻页按钮 */}
         {currentPage > 0 && (

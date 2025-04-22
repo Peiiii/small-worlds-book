@@ -2,13 +2,14 @@
 
 import { useState } from "react"
 import { motion } from "framer-motion"
-import { X, Volume2, Sparkles, RefreshCw } from "lucide-react"
+import { X, Volume2, Sparkles, RefreshCw, Zap } from "lucide-react"
 import { Button } from "@/shared/components/ui/button"
 import { Switch } from "@/shared/components/ui/switch"
 import { Label } from "@/shared/components/ui/label"
 import { Slider } from "@/shared/components/ui/slider"
 import { useWorlds } from "@/features/world/stores/worlds-context"
 import { useSound } from "@/shared/hooks/use-sound"
+import { useAnimationStore } from "@/core/stores/animation-store"
 
 interface SettingsProps {
   onClose: () => void
@@ -17,6 +18,7 @@ interface SettingsProps {
 export function Settings({ onClose }: SettingsProps) {
   const { loadProgress, saveProgress } = useWorlds()
   const { volume, setVolume, soundEnabled, setSoundEnabled } = useSound()
+  const { pageTransitionSpeed, setPageTransitionSpeed } = useAnimationStore()
   const [particleEffects, setParticleEffects] = useState(true)
   const [highQuality, setHighQuality] = useState(true)
 
@@ -29,6 +31,10 @@ export function Settings({ onClose }: SettingsProps) {
 
   const handleVolumeChange = (newVolume: number[]) => {
     setVolume(newVolume[0])
+  }
+
+  const handleSpeedChange = (newSpeed: number[]) => {
+    setPageTransitionSpeed(newSpeed[0])
   }
 
   return (
@@ -55,23 +61,23 @@ export function Settings({ onClose }: SettingsProps) {
           <X className="h-4 w-4" />
         </Button>
 
-        <h2 className="text-xl font-bold mb-6">Settings</h2>
+        <h2 className="text-xl font-bold mb-6">设置</h2>
 
         <div className="space-y-6">
           <div className="space-y-4">
-            <h3 className="text-sm font-medium text-slate-300">Sound</h3>
+            <h3 className="text-sm font-medium text-slate-300">声音</h3>
 
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <Volume2 className="h-4 w-4 text-slate-400" />
-                <Label htmlFor="sound-toggle">Sound Effects</Label>
+                <Label htmlFor="sound-toggle">音效</Label>
               </div>
               <Switch id="sound-toggle" checked={soundEnabled} onCheckedChange={setSoundEnabled} />
             </div>
 
             <div className="space-y-2">
               <div className="flex justify-between">
-                <Label htmlFor="volume-slider">Volume</Label>
+                <Label htmlFor="volume-slider">音量</Label>
                 <span className="text-sm text-slate-400">{Math.round(volume * 100)}%</span>
               </div>
               <Slider id="volume-slider" value={[volume]} max={1} step={0.01} onValueChange={handleVolumeChange} />
@@ -79,28 +85,46 @@ export function Settings({ onClose }: SettingsProps) {
           </div>
 
           <div className="space-y-4">
-            <h3 className="text-sm font-medium text-slate-300">Visual Effects</h3>
+            <h3 className="text-sm font-medium text-slate-300">视觉效果</h3>
 
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <Sparkles className="h-4 w-4 text-slate-400" />
-                <Label htmlFor="particles-toggle">Particle Effects</Label>
+                <Label htmlFor="particles-toggle">粒子效果</Label>
               </div>
               <Switch id="particles-toggle" checked={particleEffects} onCheckedChange={setParticleEffects} />
             </div>
 
             <div className="flex items-center justify-between">
-              <Label htmlFor="quality-toggle">High Quality Graphics</Label>
+              <Label htmlFor="quality-toggle">高质量图形</Label>
               <Switch id="quality-toggle" checked={highQuality} onCheckedChange={setHighQuality} />
+            </div>
+
+            <div className="space-y-2">
+              <div className="flex justify-between">
+                <div className="flex items-center gap-2">
+                  <Zap className="h-4 w-4 text-slate-400" />
+                  <Label htmlFor="speed-slider">翻页速度</Label>
+                </div>
+                <span className="text-sm text-slate-400">{Math.round(pageTransitionSpeed * 100)}%</span>
+              </div>
+              <Slider 
+                id="speed-slider" 
+                value={[pageTransitionSpeed]} 
+                min={0.1} 
+                max={1} 
+                step={0.1} 
+                onValueChange={handleSpeedChange} 
+              />
             </div>
           </div>
 
           <div className="space-y-4">
-            <h3 className="text-sm font-medium text-slate-300">Progress</h3>
+            <h3 className="text-sm font-medium text-slate-300">进度</h3>
 
             <Button variant="destructive" className="w-full" onClick={handleReset}>
               <RefreshCw className="h-4 w-4 mr-2" />
-              Reset Progress
+              重置进度
             </Button>
           </div>
         </div>
