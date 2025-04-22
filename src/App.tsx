@@ -1,16 +1,16 @@
 "use client"
 
 import { useState, useEffect, useCallback } from "react"
-import { Book } from "@/components/book"
-import { WorldsProvider } from "@/components/worlds-context"
-import { MusicPlayer } from "@/components/music-player"
-import { Settings } from "@/components/settings"
-import { Inventory } from "@/components/inventory"
-import { CharacterCreator } from "@/components/character-creator"
-import { WeatherSystem } from "@/components/weather-system"
+import { Book } from "@/features/story/components/book"
+import { WorldsProvider } from "@/features/world/stores/worlds-context"
+import { MusicPlayer } from "@/core/components/music-player"
+import { Settings } from "@/core/components/settings"
+import { Inventory } from "@/features/character/components/inventory"
+import { CharacterCreator } from "@/features/character/components/character-creator"
+import { WeatherSystem } from "@/features/weather/components/weather-system"
 import { Cog, Volume2, Package, User } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
+import { Button } from "@/shared/components/ui/button"
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/shared/components/ui/tooltip"
 
 export default function Home() {
   const [mounted, setMounted] = useState(false)
