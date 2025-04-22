@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect, useCallback } from "react"
-import { Book } from "@/features/story/components/book"
+import { Book } from "@/features/book/components/book"
 import { WorldsProvider } from "@/features/world/stores/worlds-context"
 import { MusicPlayer } from "@/core/components/music-player"
 import { Settings } from "@/core/components/settings"

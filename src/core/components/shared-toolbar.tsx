@@ -1,9 +1,9 @@
 import React from 'react'
-import { useToolbar } from '../stores/toolbar-context'
+import { useToolbarStore } from '../stores/toolbar-store'
 import { Button } from '@/shared/components/ui/button'
 
 export const SharedToolbar: React.FC = () => {
-  const { tools } = useToolbar()
+  const { tools } = useToolbarStore()
 
   return (
     <div className="absolute -top-10 left-0 z-30 flex flex-row gap-2">

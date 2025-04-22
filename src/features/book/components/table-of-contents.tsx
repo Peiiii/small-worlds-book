@@ -6,25 +6,103 @@ import { Button } from "@/shared/components/ui/button"
 import { useSound } from "@/shared/hooks/use-sound"
 
 interface TableOfContentsProps {
-  worlds: {
-    id: string
-    name: string
-    chineseName: string
-    description: string
-    color: string
-    discovered: boolean
-  }[]
-  currentPage: number
-  onSelectPage: (index: number) => void
+  isOpen: boolean
   onClose: () => void
+  currentPage: number
+  onPageChange: (index: number) => void
 }
 
-export function TableOfContents({ worlds, currentPage, onSelectPage, onClose }: TableOfContentsProps) {
+export function TableOfContents({ isOpen, onClose, currentPage, onPageChange }: TableOfContentsProps) {
   const { playSound } = useSound()
+
+  if (!isOpen) return null
+
+  const worlds = [
+    {
+      id: 'forest',
+      name: 'Forest World',
+      chineseName: '森林世界',
+      description: '一个充满生机的绿色世界',
+      color: 'green',
+      discovered: true
+    },
+    {
+      id: 'desert',
+      name: 'Desert World',
+      chineseName: '沙漠世界',
+      description: '一个充满神秘的金色世界',
+      color: 'amber',
+      discovered: true
+    },
+    {
+      id: 'ocean',
+      name: 'Ocean World',
+      chineseName: '海洋世界',
+      description: '一个充满活力的蓝色世界',
+      color: 'blue',
+      discovered: true
+    },
+    {
+      id: 'space',
+      name: 'Space World',
+      chineseName: '太空世界',
+      description: '一个充满未知的黑色世界',
+      color: 'gray',
+      discovered: false
+    },
+    {
+      id: 'mountain',
+      name: 'Mountain World',
+      chineseName: '山脉世界',
+      description: '一个充满挑战的灰色世界',
+      color: 'slate',
+      discovered: false
+    },
+    {
+      id: 'city',
+      name: 'City World',
+      chineseName: '城市世界',
+      description: '一个充满活力的灰色世界',
+      color: 'zinc',
+      discovered: false
+    },
+    {
+      id: 'crystal',
+      name: 'Crystal World',
+      chineseName: '水晶世界',
+      description: '一个充满魔法的紫色世界',
+      color: 'purple',
+      discovered: false
+    },
+    {
+      id: 'garden',
+      name: 'Garden World',
+      chineseName: '花园世界',
+      description: '一个充满芬芳的粉色世界',
+      color: 'pink',
+      discovered: false
+    },
+    {
+      id: 'sky',
+      name: 'Sky World',
+      chineseName: '天空世界',
+      description: '一个充满自由的蓝色世界',
+      color: 'sky',
+      discovered: false
+    },
+    {
+      id: 'ancient',
+      name: 'Ancient World',
+      chineseName: '远古世界',
+      description: '一个充满历史的棕色世界',
+      color: 'brown',
+      discovered: false
+    }
+  ]
 
   const handleSelectWorld = (index: number) => {
     if (worlds[index].discovered) {
-      onSelectPage(index)
+      onPageChange(index)
       playSound("page-turn")
     } else {
       playSound("error")
@@ -50,7 +128,7 @@ export function TableOfContents({ worlds, currentPage, onSelectPage, onClose }: 
           <X className="h-4 w-4" />
         </Button>
 
-        <h2 className="text-2xl font-bold text-amber-900 mb-6 text-center">Table of Contents</h2>
+        <h2 className="text-2xl font-bold text-amber-900 mb-6 text-center">目录</h2>
 
         <div className="grid gap-2">
           {worlds.map((world, index) => (
@@ -77,7 +155,7 @@ export function TableOfContents({ worlds, currentPage, onSelectPage, onClose }: 
 
               {world.discovered && <p className="text-xs mt-1 text-gray-500">{world.description}</p>}
 
-              {!world.discovered && <p className="text-xs mt-1 text-gray-400 italic">Undiscovered world</p>}
+              {!world.discovered && <p className="text-xs mt-1 text-gray-400 italic">未发现的世界</p>}
             </div>
           ))}
         </div>

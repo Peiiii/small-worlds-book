@@ -2,16 +2,14 @@
 
 import type React from "react"
 
-import { useState, useEffect, useRef } from "react"
-import { motion } from "framer-motion"
-import { useWorlds } from "@/features/world/stores/worlds-context"
-import { useSound } from "@/shared/hooks/use-sound"
-import { Badge } from "@/shared/components/ui/badge"
-import { Sparkles } from "lucide-react"
+import { useToolbarStore } from "@/core/stores/toolbar-store"
 import { Forest3DWorld } from "@/features/world/components/worlds-3d/forest-3d-world"
-import { Button } from "@/shared/components/ui/button"
-import { useToolbar } from "@/core/stores/toolbar-context"
-import { Box } from "lucide-react"
+import { useWorlds } from "@/features/world/stores/worlds-context"
+import { Badge } from "@/shared/components/ui/badge"
+import { useSound } from "@/shared/hooks/use-sound"
+import { motion } from "framer-motion"
+import { Box, Sparkles } from "lucide-react"
+import { useEffect, useRef, useState } from "react"
 
 export function ForestWorld() {
   const [is3DMode, setIs3DMode] = useState(false)
@@ -26,7 +24,7 @@ export function ForestWorld() {
   const [interactionCount, setInteractionCount] = useState(0)
   const { discoverWorld } = useWorlds()
   const { playSound } = useSound()
-  const { registerTool, unregisterTool } = useToolbar()
+  const { registerTool, unregisterTool } = useToolbarStore()
 
   useEffect(() => {
     if (containerRef.current) {
