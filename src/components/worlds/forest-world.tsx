@@ -9,6 +9,7 @@ import { useSound } from "@/hooks/use-sound"
 import { Badge } from "@/components/ui/badge"
 import { Sparkles } from "lucide-react"
 import { Forest3DWorld } from "@/components/worlds-3d/forest-3d-world"
+import { Button } from "@/components/ui/button"
 
 export function ForestWorld() {
   const [is3DMode, setIs3DMode] = useState(false)
@@ -154,7 +155,19 @@ export function ForestWorld() {
   return (
     <>
       {is3DMode ? (
-        <Forest3DWorld />
+        <div className="relative w-full h-full">
+          <div className="absolute top-4 right-4 z-10">
+            <Button
+              variant="outline"
+              size="sm"
+              className="bg-white/80 hover:bg-white"
+              onClick={() => setIs3DMode(false)}
+            >
+              2D 视图
+            </Button>
+          </div>
+          <Forest3DWorld />
+        </div>
       ) : (
         <div
           ref={containerRef}

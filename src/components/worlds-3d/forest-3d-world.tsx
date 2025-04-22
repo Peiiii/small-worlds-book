@@ -198,40 +198,14 @@ function Forest() {
 }
 
 export function Forest3DWorld() {
-  const [is3DMode, setIs3DMode] = useState(false)
-
   return (
     <div className="relative w-full h-full overflow-hidden rounded-lg">
-      {/* 2D/3D Toggle Button */}
-      <div className="absolute top-4 right-4 z-10">
-        <Button
-          variant="outline"
-          size="sm"
-          className="bg-white/80 hover:bg-white"
-          onClick={() => setIs3DMode(!is3DMode)}
-        >
-          {is3DMode ? "2D 视图" : "3D 视图"}
-        </Button>
+      <div className="w-full h-full">
+        <Canvas shadows camera={{ position: [0, 5, 10], fov: 50 }}>
+          <Forest />
+          <OrbitControls enablePan={false} maxPolarAngle={Math.PI / 2 - 0.1} minDistance={5} maxDistance={15} />
+        </Canvas>
       </div>
-
-      {/* 3D View */}
-      {is3DMode ? (
-        <div className="w-full h-full">
-          <Canvas shadows camera={{ position: [0, 5, 10], fov: 50 }}>
-            <Forest />
-            <OrbitControls enablePan={false} maxPolarAngle={Math.PI / 2 - 0.1} minDistance={5} maxDistance={15} />
-          </Canvas>
-        </div>
-      ) : (
-        /* Original 2D Forest World Component */
-        <div className="w-full h-full bg-gradient-to-b from-green-200 to-green-400">
-          <div className="absolute top-4 left-4 text-2xl font-bold text-green-900">森林世界</div>
-          <div className="absolute top-12 left-4 text-sm text-green-800">The Forest World</div>
-          <div className="absolute bottom-4 right-4 text-xs text-green-900 bg-white/30 px-2 py-1 rounded">
-            点击切换到3D视图探索更多
-          </div>
-        </div>
-      )}
     </div>
   )
 }
