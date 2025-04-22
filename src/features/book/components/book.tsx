@@ -1,6 +1,6 @@
 "use client"
 
-import { BookOpen, ChevronLeft, ChevronRight, Info } from "lucide-react"
+import { BookOpen, ChevronLeft, ChevronRight, Info, Bookmark } from "lucide-react"
 import { useEffect, useRef, useState } from "react"
 import { useToolbarStore } from "@/core/stores/toolbar-store"
 import { SharedToolbar } from "@/core/components/shared-toolbar"
@@ -18,6 +18,8 @@ import { AncientWorld } from "@/features/world/components/worlds/ancient-world"
 import { TableOfContents } from "./table-of-contents"
 import { StoryModal } from "@/features/book/components/story-modal"
 import { useAnimationStore } from "@/core/stores/animation-store"
+import { useBookmarkStore } from "@/core/stores/bookmark-store"
+import { BookmarkRibbon } from "./bookmark-ribbon"
 
 export function Book() {
   const [currentPage, setCurrentPage] = useState(0)
@@ -27,6 +29,7 @@ export function Book() {
   const bookRef = useRef<HTMLDivElement>(null)
   const { registerTool, unregisterTool } = useToolbarStore()
   const { pageTransitionSpeed } = useAnimationStore()
+  const { setTotalPages } = useBookmarkStore()
 
   const worldComponents = [
     <ForestWorld key="forest" />,
@@ -40,6 +43,11 @@ export function Book() {
     <SkyWorld key="sky" />,
     <AncientWorld key="ancient" />
   ]
+
+  // 设置总页数
+  useEffect(() => {
+    setTotalPages(worldComponents.length)
+  }, [worldComponents.length, setTotalPages])
 
   const handlePrevPage = () => {
     if (currentPage > 0) {
@@ -156,8 +164,8 @@ export function Book() {
           </button>
         )}
 
-        {/* Bookmark ribbon */}
-        <div className="absolute top-0 right-1/4 w-8 h-24 bg-red-500 z-10 bookmark-ribbon" />
+        {/* 书签丝带 */}
+        <BookmarkRibbon />
 
         {/* Page number */}
         <div className="absolute bottom-2 left-1/2 transform -translate-x-1/2 text-amber-800/70 text-sm">
