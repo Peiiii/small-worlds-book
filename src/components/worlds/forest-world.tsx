@@ -10,6 +10,8 @@ import { Badge } from "@/components/ui/badge"
 import { Sparkles } from "lucide-react"
 import { Forest3DWorld } from "@/components/worlds-3d/forest-3d-world"
 import { Button } from "@/components/ui/button"
+import { useToolbar } from "@/components/toolbar-context"
+import { Box } from "lucide-react"
 
 export function ForestWorld() {
   const [is3DMode, setIs3DMode] = useState(false)
@@ -24,6 +26,7 @@ export function ForestWorld() {
   const [interactionCount, setInteractionCount] = useState(0)
   const { discoverWorld } = useWorlds()
   const { playSound } = useSound()
+  const { registerTool, unregisterTool } = useToolbar()
 
   useEffect(() => {
     if (containerRef.current) {
@@ -152,20 +155,28 @@ export function ForestWorld() {
     return () => clearInterval(interval)
   }, [dimensions.width])
 
+  // 在组件挂载时注册3D切换工具
+  useEffect(() => {
+    registerTool({
+      id: 'forest-3d-toggle',
+      icon: <Box className="h-4 w-4 text-green-800/70" />,
+      onClick: () => setIs3DMode(!is3DMode),
+      text: is3DMode ? '2D 视图' : '3D 视图',
+      tooltip: is3DMode ? '2D 视图' : '3D 视图',
+      isWorldSpecific: true,  // 标记为世界特定工具
+      priority: 9999  // 设置一个非常大的优先级数字
+    })
+    
+    return () => {
+      // 组件卸载时清理
+      unregisterTool('forest-3d-toggle')
+    }
+  }, [registerTool, unregisterTool, is3DMode])
+
   return (
     <>
       {is3DMode ? (
         <div className="relative w-full h-full">
-          <div className="absolute top-4 right-4 z-10">
-            <Button
-              variant="outline"
-              size="sm"
-              className="bg-white/80 hover:bg-white"
-              onClick={() => setIs3DMode(false)}
-            >
-              2D 视图
-            </Button>
-          </div>
           <Forest3DWorld />
         </div>
       ) : (
@@ -342,17 +353,6 @@ export function ForestWorld() {
               New world discovered!
             </Badge>
           )}
-
-          {/* 3D Toggle Button */}
-          <button
-            className="absolute top-4 right-4 bg-white/80 hover:bg-white text-green-800 px-3 py-1 rounded-full text-sm transition-colors"
-            onClick={(e) => {
-              e.stopPropagation()
-              setIs3DMode(true)
-            }}
-          >
-            切换到 3D 视图
-          </button>
         </div>
       )}
     </>

@@ -19,6 +19,8 @@ import { TableOfContents } from "@/components/table-of-contents"
 import { Button } from "@/components/ui/button"
 import { useSound } from "@/hooks/use-sound"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
+import { ToolbarProvider, useToolbar } from "@/components/toolbar-context"
+import { SharedToolbar } from "@/components/shared-toolbar"
 
 export function Book() {
   const [currentPage, setCurrentPage] = useState(0)
@@ -135,30 +137,43 @@ export function Book() {
     return () => window.removeEventListener('keydown', handleKeyDown)
   }, [handlePrevPage, handleNextPage])
 
-  return (
-    <>
-      <div className="relative w-full max-w-4xl aspect-[3/2] perspective-1000">
-        {/* 窗口外左上角毛玻璃工具栏 */}
-        <div className="absolute -top-10 left-0 z-30 flex flex-row gap-2">
-          <Button
-            variant="ghost"
-            size="icon"
-            className="group w-8 h-8 bg-amber-100/10 backdrop-blur-sm border border-amber-200/20 hover:bg-amber-200/20 hover:border-amber-300/30 shadow-[0_2px_8px_rgba(0,0,0,0.1)] transition-all duration-300 rounded-md"
-            onClick={() => setShowToc(true)}
-          >
-            <BookOpen className="h-4 w-4 text-amber-800/70" />
-          </Button>
-          
-          <Button
-            variant="ghost"
-            size="icon"
-            className="group w-8 h-8 bg-amber-100/10 backdrop-blur-sm border border-amber-200/20 hover:bg-amber-200/20 hover:border-amber-300/30 shadow-[0_2px_8px_rgba(0,0,0,0.1)] transition-all duration-300 rounded-md"
-            onClick={() => setShowStory(true)}
-          >
-            <Info className="h-4 w-4 text-amber-800/70" />
-          </Button>
-        </div>
+  // 创建一个内部组件来使用useToolbar钩子
+  function BookContent() {
+    const { registerTool, unregisterTool } = useToolbar();
+    
+    // 注册全局工具
+    useEffect(() => {
+      // 注册目录按钮
+      registerTool({
+        id: 'contents',
+        icon: <BookOpen className="h-4 w-4 text-amber-800/70" />,
+        onClick: () => setShowToc(true),
+        tooltip: 'Contents',
+        priority: 1  // 设置最低的优先级数字
+      });
+      
+      // 注册故事按钮
+      registerTool({
+        id: 'story',
+        icon: <Info className="h-4 w-4 text-amber-800/70" />,
+        onClick: () => setShowStory(true),
+        tooltip: 'Story',
+        priority: 2  // 设置第二低的优先级数字
+      });
+      
+      return () => {
+        // 清理
+        unregisterTool('contents');
+        unregisterTool('story');
+      };
+    }, [registerTool, unregisterTool]);
 
+    return (
+      <div className="relative w-full max-w-4xl aspect-[3/2] perspective-1000">
+        <SharedToolbar />
+        
+        {/* 窗口外左上角毛玻璃工具栏 - 已通过SharedToolbar替代 */}
+        
         <div
           ref={bookRef}
           className="relative w-full h-full bg-amber-50 rounded-lg shadow-2xl overflow-hidden book-container"
@@ -219,6 +234,12 @@ export function Book() {
           </div>
         </div>
       </div>
+    );
+  }
+
+  return (
+    <ToolbarProvider>
+      <BookContent />
 
       {showStory && <StoryModal worldId={worlds[currentPage].id} onClose={() => setShowStory(false)} />}
 
@@ -230,6 +251,6 @@ export function Book() {
           onClose={() => setShowToc(false)}
         />
       )}
-    </>
+    </ToolbarProvider>
   )
 }
